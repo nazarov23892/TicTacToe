@@ -7,8 +7,20 @@ class GameStatuses {
     static get WinPlayer2() { return 4 };
 }
 
-let updateButton = document.getElementById("updateButton")
+const FIELD_DIMENSION = 3;
+let playerId = null;
+let updateButton = document.getElementById("updateButton");
 let fieldPoints = getFieldPoints();
+let createGameButton = document.getElementById("createGameButton");
+let gameId_input = document.getElementById("gameId_input");
+let statusInput = document.getElementById("statusInput");
+let messageInput = document.getElementById("messageInput");
+let existGameId_Input = document.getElementById("existGameId_Input");
+let connectButton = document.getElementById("connectButton");
+
+updateButton.onclick = updateButton_Click;
+createGameButton.onclick = createButton_Click;
+connectButton.onclick = connectButton_Click;
 
 // returns point elements as 2-dimensional array[x][y]
 function getFieldPoints() {
@@ -27,4 +39,16 @@ function getFieldPoints() {
         points1[posX][posY] = point1;
     }
     return points1;
+}
+
+function updateButton_Click(e) {
+
+}
+
+function createButton_Click(e) {
+
+}
+
+function connectButton_Click(e) {
+
 }
