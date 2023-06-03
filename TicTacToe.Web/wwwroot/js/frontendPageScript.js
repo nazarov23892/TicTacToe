@@ -32,7 +32,7 @@ let updateButton = document.getElementById("updateButton");
 let fieldPoints = getFieldPoints();
 let createGameButton = document.getElementById("createGameButton");
 let gameId_input = document.getElementById("gameId_input");
-let palayerId_input = document.getElementById("palayerId_input");
+let playerId_input = document.getElementById("palayerId_input");
 let statusInput = document.getElementById("statusInput");
 let messageInput = document.getElementById("messageInput");
 let existGameId_Input = document.getElementById("existGameId_Input");
@@ -69,11 +69,13 @@ async function createButton_Click(e) {
     await createNewGame();
 }
 
-function connectButton_Click(e) {
-
+async function connectButton_Click(e) {
+    await connectToGame();
 }
 
 async function createNewGame() {
+
+    clearElements();
     let url = `/api/game/`;
     let request = {
         method: "POST",
@@ -91,7 +93,7 @@ async function createNewGame() {
         return;
     }
     gameId_input.value = result.gameId;
-    palayerId_input.value = result.player1_Id;
+    playerId_input.value = result.player1_Id;
 }
 
 async function updateState() {
@@ -140,11 +142,37 @@ async function updateState() {
     statusInput.value = statusText;
 }
 
+async function connectToGame() {
+
+    let gameId = existGameId_Input.value;
+    clearElements();
+    if (gameId == null && gameId == "") {
+        return;
+    }
+    let url = `/api/game/connect/${gameId}`;
+    let request = {
+        method: "PUT",
+        headers: {
+            "Accept": "application/json",
+        }
+    };
+    let response = await fetch(url, request);
+    if (!response.ok) {
+        return;
+    }
+    let result = await response.json();
+    if (!result.done) {
+        messageInput.value = result.error;
+        return;
+    }
+    gameId_input.value = gameId;
+    playerId_input.value = result.player2_Id;
+}
 function clearElements() {
 
     statusInput.value = null;
     messageInput.value = null;
-    existGameId_Input = null;
+    existGameId_Input.value = null;
 
     for (var y = 0; y < FIELD_DIMENSION; y++) {
         for (var x = 0; x < FIELD_DIMENSION; x++) {
