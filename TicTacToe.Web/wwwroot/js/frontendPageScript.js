@@ -41,6 +41,7 @@ let connectButton = document.getElementById("connectButton");
 updateButton.onclick = updateButton_Click;
 createGameButton.onclick = createButton_Click;
 connectButton.onclick = connectButton_Click;
+setFieldPoints_onClick();
 
 // returns point elements as 2-dimensional array[x][y]
 function getFieldPoints() {
@@ -59,6 +60,20 @@ function getFieldPoints() {
         points1[posX][posY] = point1;
     }
     return points1;
+}
+
+function setFieldPoints_onClick(fieldPointsArray) {
+    for (let y = 0; y < FIELD_DIMENSION; y++) {
+        for (let x = 0; x < FIELD_DIMENSION; x++) {
+            fieldPoints[x][y].onclick = fieldPoint_Click;
+        }
+    }
+}
+
+async function fieldPoint_Click(e) {
+    let x = Number.parseInt(e.target.getAttribute("data-posX"));
+    let y = Number.parseInt(e.target.getAttribute("data-posY"));
+    await doTurn(x, y);
 }
 
 async function updateButton_Click(e) {
@@ -168,6 +183,40 @@ async function connectToGame() {
     gameId_input.value = gameId;
     playerId_input.value = result.player2_Id;
 }
+
+async function doTurn(xPos, yPos) {
+    let gameId = gameId_input.value;
+    let playerId = palayerId_input.value;
+    if (gameId == null || gameId == "") {
+        messageInput.value = "unconnected";
+        return;
+    }
+    let url = `/api/game/${gameId}`;
+    let turnDto = {
+        playerId: playerId,
+        x: xPos,
+        y: yPos
+    };
+    let request = {
+        method: "PUT",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(turnDto)
+    };
+    let response = await fetch(url, request);
+    if (!response.ok) {
+        messageInput.value = "connection lost";
+        return;
+    }
+    let result = await response.json();
+    if (!result.done) {
+        messageInput.value = result.error;
+        return;
+    }
+}
+
 function clearElements() {
 
     statusInput.value = null;
