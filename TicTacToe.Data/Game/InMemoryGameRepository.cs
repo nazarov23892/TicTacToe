@@ -29,5 +29,14 @@ namespace TicTacToe.Data.Game
             }
             return _games[gameId];
         }
+
+        public void UpdateGame(GameState game)
+        {
+            if (!_games.ContainsKey(game.GameId))
+            {
+                throw new InvalidOperationException("game not found");
+            }
+            _games[game.GameId] = game;
+        }
     }
 }

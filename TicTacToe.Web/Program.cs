@@ -38,6 +38,12 @@ namespace TicTacToe.Web
                 pattern: "/api/game/{id}",
                 handler: (Guid id) => gameService.GetStatus(gameId: id));
 
+            // connect player2 to game
+            app.MapPut(
+                pattern: "/api/game/connect/{id}",
+                handler: (Guid id) => gameService.ConnectToGame(gameId: id)
+                );
+
             app.Run();
         }
     }

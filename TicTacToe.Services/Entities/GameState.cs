@@ -8,9 +8,9 @@ namespace TicTacToe.Services.Entities
 {
     public class GameState
     {
-        public Guid GameId { get; set; }
-        public Guid Player1_Id { get; set; }
-        public Guid Player2_Id { get; set; }
+        public Guid GameId { get; set; } = Guid.Empty;
+        public Guid Player1_Id { get; set; } = Guid.Empty;
+        public Guid Player2_Id { get; set; } = Guid.Empty;
         public GameStatus Status { get; set; } = GameStatus.WaitPlayer2_Connect;
         public ICollection<GamePointItem> Points{get;set;} = new List<GamePointItem>();
     }

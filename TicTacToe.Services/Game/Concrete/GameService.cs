@@ -18,6 +18,30 @@ namespace TicTacToe.Services.Game.Concrete
             _gameRepository = gameRepository;
         }
 
+        public ConnectPlayer2_ResponseDto? ConnectToGame(Guid gameId)
+        {
+            GameState? game = _gameRepository.GetGame(gameId);
+            if (game == null)
+            {
+                return null;
+            }
+            if (game.Status != GameStatus.WaitPlayer2_Connect)
+            {
+                return null;
+            }
+            if (game.Player2_Id != Guid.Empty)
+            {
+                return null;
+            }
+            Guid player2_Id = Guid.NewGuid();
+            game.Player2_Id = player2_Id;
+            _gameRepository.UpdateGame(game);
+            return new ConnectPlayer2_ResponseDto
+            {
+                Player2_Id = player2_Id
+            };
+        }
+
         public CreateGameResponseDto Create()
         {
             GameState newGame = new GameState

@@ -11,5 +11,6 @@ namespace TicTacToe.Services.Repositories
     {
         GameState? GetGame(Guid gameId);
         void AddGame(GameState game);
+        void UpdateGame(GameState game);
     }
 }

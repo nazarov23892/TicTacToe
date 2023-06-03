@@ -11,5 +11,6 @@ namespace TicTacToe.Services.Game
     {
         public CreateGameResponseDto Create();
         GameStateResponseDto? GetStatus(Guid gameId);
+        ConnectPlayer2_ResponseDto? ConnectToGame(Guid gameId);
     }
 }
