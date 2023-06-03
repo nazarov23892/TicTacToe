@@ -32,6 +32,11 @@ namespace TicTacToe.Web
                 pattern: "/api/game/",
                 handler: () => gameService.Create()
                 );
+            
+            // get game state
+            app.MapGet(
+                pattern: "/api/game/{id}",
+                handler: (Guid id) => gameService.GetStatus(gameId: id));
 
             app.Run();
         }

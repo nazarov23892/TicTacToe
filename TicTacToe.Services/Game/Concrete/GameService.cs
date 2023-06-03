@@ -33,5 +33,20 @@ namespace TicTacToe.Services.Game.Concrete
                 Player1_Id = newGame.Player1_Id
             };
         }
+
+        public GameStateResponseDto? GetStatus(Guid gameId)
+        {
+            var game = _gameRepository.GetGame(gameId);
+            if (game == null)
+            {
+                return null;
+            }
+            return new GameStateResponseDto
+            {
+                Status = game.Status,
+                Points = game.Points
+            };
+
+        }
     }
 }

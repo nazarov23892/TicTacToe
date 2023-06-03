@@ -10,5 +10,6 @@ namespace TicTacToe.Services.Game
     public interface IGameService
     {
         public CreateGameResponseDto Create();
+        GameStateResponseDto? GetStatus(Guid gameId);
     }
 }
