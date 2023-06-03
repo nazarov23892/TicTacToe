@@ -1,6 +1,7 @@
 using TicTacToe.Data.Game;
 using TicTacToe.Services.Game;
 using TicTacToe.Services.Game.Concrete;
+using TicTacToe.Services.Game.Requests;
 using TicTacToe.Services.Repositories;
 
 namespace TicTacToe.Web
@@ -42,6 +43,14 @@ namespace TicTacToe.Web
             app.MapPut(
                 pattern: "/api/game/connect/{id}",
                 handler: (Guid id) => gameService.ConnectToGame(gameId: id)
+                );
+
+            // do turn
+            app.MapPut(
+                pattern: "/api/game/{id}",
+                handler: (Guid id, TurnRequestDto turnDto) => gameService.DoTurn(
+                    gameId: id,
+                    turnDto: turnDto)
                 );
 
             app.Run();

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TicTacToe.Services.Entities;
+using TicTacToe.Services.Game.Requests;
 using TicTacToe.Services.Game.Responses;
 using TicTacToe.Services.Repositories;
 
@@ -11,6 +13,7 @@ namespace TicTacToe.Services.Game.Concrete
 {
     public class GameService : IGameService
     {
+        private const int FieldDimension = 3;
         private readonly IGameRepository _gameRepository;
 
         public GameService(IGameRepository gameRepository)
@@ -29,12 +32,12 @@ namespace TicTacToe.Services.Game.Concrete
             {
                 return new ErrorResponseDto(errorMessage: "player's connection is not expected");
             }
-            Guid player2_Id = Guid.NewGuid();
-            game.Player2_Id = player2_Id;
+            game.Player2_Id = Guid.NewGuid();
+            game.Status = GameStatus.WaitPlayer1_Turn;
             _gameRepository.UpdateGame(game);
             return new ConnectPlayer2_ResponseDto
             {
-                Player2_Id = player2_Id
+                Player2_Id = game.Player2_Id
             };
         }
 
@@ -44,7 +47,14 @@ namespace TicTacToe.Services.Game.Concrete
             {
                 GameId = Guid.NewGuid(),
                 Player1_Id = Guid.NewGuid(),
-                Status = GameStatus.WaitPlayer2_Connect
+                Status = GameStatus.WaitPlayer2_Connect,
+                Points = Enumerable.Range(0, FieldDimension * FieldDimension)
+                    .Select(i => new GamePointItem
+                    {
+                        X = i % FieldDimension,
+                        Y = i / FieldDimension,
+                        Value = GamePointValue.None
+                    }).ToList()
             };
             _gameRepository.AddGame(newGame);
             return new CreateGameResponseDto
@@ -52,6 +62,73 @@ namespace TicTacToe.Services.Game.Concrete
                 GameId = newGame.GameId,
                 Player1_Id = newGame.Player1_Id
             };
+        }
+
+        public BasicResponseDto DoTurn(Guid gameId, TurnRequestDto turnDto)
+        {
+            GameState? game = _gameRepository.GetGame(gameId);
+            if (game == null)
+            {
+                return new ErrorResponseDto("game not found");
+            }
+            if (game.Status == GameStatus.WaitPlayer1_Turn)
+            {
+                return DoTournPlayer1(game, turnDto);
+            }
+            else if (game.Status == GameStatus.WaitPlayer2_Turn)
+            {
+                return DoTournPlayer2(game, turnDto);
+            }
+            return new ErrorResponseDto("the player's turn is not expected");
+        }
+
+        private BasicResponseDto DoTournPlayer1(GameState game, TurnRequestDto turnDto)
+        {
+            GamePointItem? point = game.Points.SingleOrDefault(p => p.X == turnDto.X && p.Y == turnDto.Y);
+            if (point == null)
+            {
+                return new ErrorResponseDto("incorrect point value");
+            }
+            if (point.Value != GamePointValue.None)
+            {
+                return new ErrorResponseDto("the point already occupied");
+            }
+            if (turnDto.PlayerId == game.Player2_Id)
+            {
+                return new ErrorResponseDto("player's #2 turn is not expected");
+            }
+            if (turnDto.PlayerId != game.Player1_Id)
+            {
+                return new ErrorResponseDto("incorrect player id");
+            }
+            point.Value = GamePointValue.Player1;
+            game.Status = GameStatus.WaitPlayer2_Turn;
+            _gameRepository.UpdateGame(game);
+            return new TurnResponseDto();
+        }
+
+        private BasicResponseDto DoTournPlayer2(GameState game, TurnRequestDto turnDto)
+        {
+            GamePointItem? point = game.Points.SingleOrDefault(p => p.X == turnDto.X && p.Y == turnDto.Y);
+            if (point == null)
+            {
+                return new ErrorResponseDto("incorrect point value");
+            }
+            if (point.Value != GamePointValue.None)
+            {
+                return new ErrorResponseDto("the point already occupied");
+            }
+            if (turnDto.PlayerId == game.Player1_Id)
+            {
+                return new ErrorResponseDto("player's #1 turn is not expected");
+            }
+            if (turnDto.PlayerId != game.Player2_Id)
+            {
+                return new ErrorResponseDto("incorrect player id");
+            }
+            point.Value = GamePointValue.Player2;
+            game.Status = GameStatus.WaitPlayer1_Turn;
+            return new TurnResponseDto();
         }
 
         public BasicResponseDto GetStatus(Guid gameId)
