@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Tic Tac Toe</title>
+    <style>
+        .fieldpoint {
+            background-color: darkgrey;
+            border-width: 2px;
+            border-color: black;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Tic Tac Toe</h2>
+    <br />
+    <table>
+        <tr>
+            <td><div id="point_0_0" class="fieldpoint" data-posX="0" data-posY="0"></div></td>
+            <td><div id="point_0_1" class="fieldpoint" data-posX="1" data-posY="0"></div></td>
+            <td><div id="point_0_2" class="fieldpoint" data-posX="2" data-posY="0"></div></td>
+        </tr>
+        <tr>
+            <td><div id="point_1_0" class="fieldpoint" data-posX="0" data-posY="1"></div></td>
+            <td><div id="point_1_1" class="fieldpoint" data-posX="1" data-posY="1"></div></td>
+            <td><div id="point_1_2" class="fieldpoint" data-posX="2" data-posY="1"></div></td>
+        </tr>
+        <tr>
+            <td><div id="point_2_0" class="fieldpoint" data-posX="0" data-posY="2"></div></td>
+            <td><div id="point_2_1" class="fieldpoint" data-posX="1" data-posY="2"></div></td>
+            <td><div id="point_2_2" class="fieldpoint" data-posX="2" data-posY="2"></div></td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <button id="updateButton">update</button>
+    <script type="text/javascript" src="js/frontendPageScript.js"></script>
+</body>
+</html>

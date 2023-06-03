@@ -26,6 +26,8 @@ namespace TicTacToe.Web
                     .GetRequiredService<IGameService>();
             }
 
+            app.UseStaticFiles();
+
             app.MapGet("/", () => "Hello World!");
 
             // create new game
