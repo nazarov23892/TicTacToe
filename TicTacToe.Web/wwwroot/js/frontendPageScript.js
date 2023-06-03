@@ -1,10 +1,29 @@
 ﻿
 class GameStatuses {
-    static get WaitPlayer1() { return 0; };
-    static get WaitPlayer2() { return 1; }
-    static get Draw() { return 2; };
-    static get WinPlayer1() { return 3 };
-    static get WinPlayer2() { return 4 };
+    static get WaitConnectPlayer2() { return 0; };
+    static get WaitPlayer1() { return 1; };
+    static get WaitPlayer2() { return 2; }
+    static get Draw() { return 3; };
+    static get WinPlayer1() { return 4; };
+    static get WinPlayer2() { return 5; };
+
+    static getStatusText(statusCode) {
+        switch (statusCode) {
+            case GameStatuses.WaitConnectPlayer2: return "wait player #2 connect";
+            case GameStatuses.WaitPlayer1: return "wait player #1 turn";
+            case GameStatuses.WaitPlayer2: return "wait player #2 turn";
+            case GameStatuses.WinPlayer1: return "player #1 WIN";
+            case GameStatuses.WinPlayer2: return "player #2 WIN";
+            case GameStatuses.Draw: return "draw";
+            default: return "invalid state";
+        }
+    }
+}
+
+class PointValues {
+    static get None() { return 0; };
+    static get Player1() { return 1; };
+    static get Player2() { return 2; };
 }
 
 const FIELD_DIMENSION = 3;
@@ -42,8 +61,8 @@ function getFieldPoints() {
     return points1;
 }
 
-function updateButton_Click(e) {
-
+async function updateButton_Click(e) {
+    await updateState();
 }
 
 async function createButton_Click(e) {
@@ -73,4 +92,64 @@ async function createNewGame() {
     }
     gameId_input.value = result.gameId;
     palayerId_input.value = result.player1_Id;
+}
+
+async function updateState() {
+    clearElements();
+
+    let gameId = gameId_input.value;
+    if (gameId == null || gameId === "") {
+        statusInput.value = "unconnected";
+        return;
+    }
+    let url = `/api/game/${gameId}`;
+    let response = await fetch(url);
+    if (!response.ok) {
+        statusInput.value = "unconnected";
+        return;
+    }
+    let gameState = await response.json();
+    if (!gameState.done) {
+        statusInput.value = "has errors";
+        messageInput.value = gameState.error;
+        return;
+    }
+    let statusCode = gameState.status;
+    let statusText = GameStatuses.getStatusText(statusCode);
+    for (let point of gameState.points) {
+        let x = point.x;
+        let y = point.y;
+        let pointElement = fieldPoints[x][y];
+
+        let sign = "";
+        switch (point.value) {
+            case PointValues.None:
+                sign = ".";
+                break;
+            case PointValues.Player1:
+                sign = "X";
+                break;
+            case PointValues.Player2:
+                sign = "O";
+                break;
+            default:
+                sign = "";
+        }
+        pointElement.innerText = sign;
+    }
+    statusInput.value = statusText;
+}
+
+function clearElements() {
+
+    statusInput.value = null;
+    messageInput.value = null;
+    existGameId_Input = null;
+
+    for (var y = 0; y < FIELD_DIMENSION; y++) {
+        for (var x = 0; x < FIELD_DIMENSION; x++) {
+            let fieldPoint = fieldPoints[x, y];
+            fieldPoint.innerText = null;
+        }
+    }
 }
