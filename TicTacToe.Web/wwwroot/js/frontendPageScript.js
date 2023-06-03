@@ -13,6 +13,7 @@ let updateButton = document.getElementById("updateButton");
 let fieldPoints = getFieldPoints();
 let createGameButton = document.getElementById("createGameButton");
 let gameId_input = document.getElementById("gameId_input");
+let palayerId_input = document.getElementById("palayerId_input");
 let statusInput = document.getElementById("statusInput");
 let messageInput = document.getElementById("messageInput");
 let existGameId_Input = document.getElementById("existGameId_Input");
@@ -45,10 +46,31 @@ function updateButton_Click(e) {
 
 }
 
-function createButton_Click(e) {
-
+async function createButton_Click(e) {
+    await createNewGame();
 }
 
 function connectButton_Click(e) {
 
+}
+
+async function createNewGame() {
+    let url = `/api/game/`;
+    let request = {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+        }
+    };
+    let response = await fetch(url, request);
+    if (!response.ok) {
+        return;
+    }
+    let result = await response.json();
+    if (!result.done) {
+        messageInput.value = result.error;
+        return;
+    }
+    gameId_input.value = result.gameId;
+    palayerId_input.value = result.player1_Id;
 }
