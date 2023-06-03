@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace TicTacToe.Services.Game.Responses
 {
-    public class ConnectPlayer2_ResponseDto
+    public class ConnectPlayer2_ResponseDto:BasicResponseDto
     {
+        public ConnectPlayer2_ResponseDto()
+        {
+            Done = true;
+        }
+
         public Guid Player2_Id { get; set; }
     }
 }

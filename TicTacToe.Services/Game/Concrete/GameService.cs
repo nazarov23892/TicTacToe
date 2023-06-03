@@ -18,20 +18,16 @@ namespace TicTacToe.Services.Game.Concrete
             _gameRepository = gameRepository;
         }
 
-        public ConnectPlayer2_ResponseDto? ConnectToGame(Guid gameId)
+        public BasicResponseDto ConnectToGame(Guid gameId)
         {
             GameState? game = _gameRepository.GetGame(gameId);
             if (game == null)
             {
-                return null;
+                return new ErrorResponseDto(errorMessage: "game not found");
             }
             if (game.Status != GameStatus.WaitPlayer2_Connect)
             {
-                return null;
-            }
-            if (game.Player2_Id != Guid.Empty)
-            {
-                return null;
+                return new ErrorResponseDto(errorMessage: "player's connection is not expected");
             }
             Guid player2_Id = Guid.NewGuid();
             game.Player2_Id = player2_Id;
@@ -42,7 +38,7 @@ namespace TicTacToe.Services.Game.Concrete
             };
         }
 
-        public CreateGameResponseDto Create()
+        public BasicResponseDto Create()
         {
             GameState newGame = new GameState
             {
@@ -58,19 +54,18 @@ namespace TicTacToe.Services.Game.Concrete
             };
         }
 
-        public GameStateResponseDto? GetStatus(Guid gameId)
+        public BasicResponseDto GetStatus(Guid gameId)
         {
             var game = _gameRepository.GetGame(gameId);
             if (game == null)
             {
-                return null;
+                return new ErrorResponseDto(errorMessage: "game not found");
             }
             return new GameStateResponseDto
             {
                 Status = game.Status,
                 Points = game.Points
             };
-
         }
     }
 }

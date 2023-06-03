@@ -9,8 +9,8 @@ namespace TicTacToe.Services.Game
 {
     public interface IGameService
     {
-        public CreateGameResponseDto Create();
-        GameStateResponseDto? GetStatus(Guid gameId);
-        ConnectPlayer2_ResponseDto? ConnectToGame(Guid gameId);
+        BasicResponseDto Create();
+        BasicResponseDto GetStatus(Guid gameId);
+        BasicResponseDto ConnectToGame(Guid gameId);
     }
 }

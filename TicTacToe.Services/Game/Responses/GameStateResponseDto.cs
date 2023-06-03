@@ -7,8 +7,13 @@ using TicTacToe.Services.Entities;
 
 namespace TicTacToe.Services.Game.Responses
 {
-    public class GameStateResponseDto
+    public class GameStateResponseDto: BasicResponseDto
     {
+        public GameStateResponseDto()
+        {
+            Done = true;
+        }
+
         public GameStatus Status { get; set; }
         public IEnumerable<GamePointItem> Points { get; set; } = Enumerable.Empty<GamePointItem>();
 

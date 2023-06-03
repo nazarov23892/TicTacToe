@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace TicTacToe.Services.Game.Responses
 {
-    public class CreateGameResponseDto
+    public class CreateGameResponseDto : BasicResponseDto
     {
+        public CreateGameResponseDto()
+        {
+            Done = true;
+        }
         public Guid Player1_Id { get; set; }
         public Guid GameId { get; set; }
     }
