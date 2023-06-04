@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.16" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TicTacToe.Services\TicTacToe.Services.csproj" />
   </ItemGroup>
 

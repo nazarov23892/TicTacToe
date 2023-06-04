@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace TicTacToe.Services.Entities
 {
     public class GameState
     {
+        [Key]
         public Guid GameId { get; set; } = Guid.Empty;
         public Guid Player1_Id { get; set; } = Guid.Empty;
         public Guid Player2_Id { get; set; } = Guid.Empty;
