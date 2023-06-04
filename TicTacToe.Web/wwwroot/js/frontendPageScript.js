@@ -26,7 +26,35 @@ class PointValues {
     static get Player2() { return 2; };
 }
 
+class TimerTool {
+
+    constructor(interval) {
+        this.#interval = interval;
+    }
+
+    #timerId = 0;
+    #interval = 1000;
+    #callback;
+
+    start() {
+        if (this.#timerId != 0) {
+            return;
+        }
+        this.#timerId = setInterval(this.#callback, this.#interval);
+    }
+
+    stop() {
+        clearInterval(this.#timerId);
+        this.#timerId = 0;
+    }
+
+    set callback(callback) {
+        this.#callback = callback;
+    }
+}
+
 const FIELD_DIMENSION = 3;
+const UPDATE_INTERVAL = 2000;
 let playerId = null;
 let updateButton = document.getElementById("updateButton");
 let fieldPoints = getFieldPoints();
@@ -37,10 +65,14 @@ let statusInput = document.getElementById("statusInput");
 let messageInput = document.getElementById("messageInput");
 let existGameId_Input = document.getElementById("existGameId_Input");
 let connectButton = document.getElementById("connectButton");
+let autoupdateCheckbox = document.getElementById("autoupdateCheckbox");
+let timer1 = new TimerTool(UPDATE_INTERVAL);
 
 updateButton.onclick = updateButton_Click;
 createGameButton.onclick = createButton_Click;
 connectButton.onclick = connectButton_Click;
+autoupdateCheckbox.onchange = autoupdateCheckbox_Change;
+timer1.callback = timer_timeout;
 setFieldPoints_onClick();
 
 // returns point elements as 2-dimensional array[x][y]
@@ -86,6 +118,20 @@ async function createButton_Click(e) {
 
 async function connectButton_Click(e) {
     await connectToGame();
+}
+
+function autoupdateCheckbox_Change(e) {
+    let isChecked = e.target.checked;
+    if (isChecked) {
+        timer1.start();
+    }
+    else {
+        timer1.stop();
+    }
+}
+
+async function timer_timeout() {
+    await updateState();
 }
 
 async function createNewGame() {
