@@ -166,7 +166,19 @@ namespace TicTacToe.Services.Game.Concrete
                 return true;
             }
 
-            // todo: check completed diagonals 
+            // check completed diagonals 
+            if (correspondValues.FirstOrDefault(p => p.X == 0 && p.Y == 0) != null
+                && correspondValues.FirstOrDefault(p => p.X == 1 && p.Y == 1) != null
+                && correspondValues.FirstOrDefault(p => p.X == 2 && p.Y == 2) != null)
+            {
+                return true;
+            }
+            if (correspondValues.FirstOrDefault(p => p.X == 0 && p.Y == 2) != null
+                && correspondValues.FirstOrDefault(p => p.X == 1 && p.Y == 1) != null
+                && correspondValues.FirstOrDefault(p => p.X == 2 && p.Y == 0) != null)
+            {
+                return true;
+            }
             return false;
         }
 
