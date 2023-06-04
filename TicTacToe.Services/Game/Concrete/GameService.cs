@@ -107,6 +107,11 @@ namespace TicTacToe.Services.Game.Concrete
                 game.Status = GameStatus.WinPlayer1;
                 goto exit_point;
             }
+            if (CheckTurnsAreOver(game))
+            {
+                game.Status = GameStatus.Draw;
+                goto exit_point;
+            }
             game.Status = GameStatus.WaitPlayer2_Turn;
 
         exit_point:
@@ -139,11 +144,24 @@ namespace TicTacToe.Services.Game.Concrete
                 game.Status = GameStatus.WinPlayer2;
                 goto exit_point;
             }
+            if (CheckTurnsAreOver(game))
+            {
+                game.Status = GameStatus.Draw;
+                goto exit_point;
+            }
             game.Status = GameStatus.WaitPlayer1_Turn;
 
         exit_point:
             _gameRepository.UpdateGame(game);
             return new TurnResponseDto();
+        }
+
+        private bool CheckTurnsAreOver(GameState game)
+        {
+            bool hasTurns = game.Points
+                .Where(p => p.Value == GamePointValue.None)
+                .Any();
+            return !hasTurns;
         }
 
         private bool CheckCompletedLines(IEnumerable<GamePointItem> points, GamePointValue pointValue)
