@@ -26,7 +26,7 @@ namespace TicTacToe.Services.Game.Concrete
             GameState? game = _gameRepository.GetGame(gameId);
             if (game == null)
             {
-                return new ErrorResponseDto(errorMessage: "game not found");
+                return GameNotFound();
             }
             if (game.Status != GameStatus.WaitPlayer2_Connect)
             {
@@ -69,7 +69,7 @@ namespace TicTacToe.Services.Game.Concrete
             GameState? game = _gameRepository.GetGame(gameId);
             if (game == null)
             {
-                return new ErrorResponseDto("game not found");
+                return GameNotFound();
             }
             if (game.Status == GameStatus.WaitPlayer1_Turn)
             {
@@ -87,11 +87,11 @@ namespace TicTacToe.Services.Game.Concrete
             GamePointItem? point = game.Points.SingleOrDefault(p => p.X == turnDto.X && p.Y == turnDto.Y);
             if (point == null)
             {
-                return new ErrorResponseDto("incorrect point value");
+                return IncorrectPointValue();
             }
             if (point.Value != GamePointValue.None)
             {
-                return new ErrorResponseDto("the point already occupied");
+                return PointAlreadyOccuppied();
             }
             if (turnDto.PlayerId == game.Player2_Id)
             {
@@ -99,7 +99,7 @@ namespace TicTacToe.Services.Game.Concrete
             }
             if (turnDto.PlayerId != game.Player1_Id)
             {
-                return new ErrorResponseDto("incorrect player id");
+                return IncorrectPlayerId();
             }
             point.Value = GamePointValue.Player1;
             if (CheckCompletedLines(game.Points, GamePointValue.Player1))
@@ -124,11 +124,11 @@ namespace TicTacToe.Services.Game.Concrete
             GamePointItem? point = game.Points.SingleOrDefault(p => p.X == turnDto.X && p.Y == turnDto.Y);
             if (point == null)
             {
-                return new ErrorResponseDto("incorrect point value");
+                return IncorrectPointValue();
             }
             if (point.Value != GamePointValue.None)
             {
-                return new ErrorResponseDto("the point already occupied");
+                return PointAlreadyOccuppied();
             }
             if (turnDto.PlayerId == game.Player1_Id)
             {
@@ -136,7 +136,7 @@ namespace TicTacToe.Services.Game.Concrete
             }
             if (turnDto.PlayerId != game.Player2_Id)
             {
-                return new ErrorResponseDto("incorrect player id");
+                return IncorrectPlayerId();
             }
             point.Value = GamePointValue.Player2;
             if (CheckCompletedLines(game.Points, GamePointValue.Player2))
@@ -205,13 +205,33 @@ namespace TicTacToe.Services.Game.Concrete
             var game = _gameRepository.GetGame(gameId);
             if (game == null)
             {
-                return new ErrorResponseDto(errorMessage: "game not found");
+                return GameNotFound();
             }
             return new GameStateResponseDto
             {
                 Status = game.Status,
                 Points = game.Points
             };
+        }
+
+        private ErrorResponseDto GameNotFound()
+        {
+            return new ErrorResponseDto(errorMessage: "game not found");
+        }
+
+        private ErrorResponseDto IncorrectPointValue()
+        {
+            return new ErrorResponseDto("incorrect point value");
+        }
+
+        private ErrorResponseDto PointAlreadyOccuppied()
+        {
+            return new ErrorResponseDto("the point already occupied");
+        }
+
+        private ErrorResponseDto IncorrectPlayerId()
+        {
+            return new ErrorResponseDto("incorrect player id");
         }
     }
 }
