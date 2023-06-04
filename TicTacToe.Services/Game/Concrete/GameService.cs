@@ -102,7 +102,14 @@ namespace TicTacToe.Services.Game.Concrete
                 return new ErrorResponseDto("incorrect player id");
             }
             point.Value = GamePointValue.Player1;
+            if (CheckCompletedLines(game.Points, GamePointValue.Player1))
+            {
+                game.Status = GameStatus.WinPlayer1;
+                goto exit_point;
+            }
             game.Status = GameStatus.WaitPlayer2_Turn;
+
+        exit_point:
             _gameRepository.UpdateGame(game);
             return new TurnResponseDto();
         }
@@ -127,8 +134,40 @@ namespace TicTacToe.Services.Game.Concrete
                 return new ErrorResponseDto("incorrect player id");
             }
             point.Value = GamePointValue.Player2;
+            if (CheckCompletedLines(game.Points, GamePointValue.Player2))
+            {
+                game.Status = GameStatus.WinPlayer2;
+                goto exit_point;
+            }
             game.Status = GameStatus.WaitPlayer1_Turn;
+
+        exit_point:
+            _gameRepository.UpdateGame(game);
             return new TurnResponseDto();
+        }
+
+        private bool CheckCompletedLines(IEnumerable<GamePointItem> points, GamePointValue pointValue)
+        {
+            var correspondValues = points.Where(p => p.Value == pointValue);
+
+            // check completed rows
+            if (correspondValues.GroupBy(p => p.Y)
+                .Where(g => g.Count() >= FieldDimension)
+                .Any())
+            {
+                return true;
+            }
+
+            // check completed cols
+            if (correspondValues.GroupBy(p => p.X)
+                .Where(g => g.Count() >= FieldDimension)
+                .Any())
+            {
+                return true;
+            }
+
+            // todo: check completed diagonals 
+            return false;
         }
 
         public BasicResponseDto GetStatus(Guid gameId)
