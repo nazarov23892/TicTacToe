@@ -20,11 +20,14 @@ namespace TicTacToe.Data.Game
             efDbContext.SaveChanges();
         }
 
-        public GameState? GetGame(Guid gameId)
+        public GameState? GetGame(Guid gameId, bool includePoints = false)
         {
-            return efDbContext.Games
-                .Include(g => g.Points)
-                .FirstOrDefault(g => g.GameId == gameId);
+            return includePoints
+                ? efDbContext.Games
+                    .Include(g => g.Points)
+                    .FirstOrDefault(g => g.GameId == gameId)
+                : efDbContext.Games
+                    .FirstOrDefault(g => g.GameId == gameId);
         }
 
         public void UpdateGame(GameState game)

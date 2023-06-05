@@ -21,7 +21,7 @@ namespace TicTacToe.Data.Game
             _games[game.GameId] = game;
         }
 
-        public GameState? GetGame(Guid gameId)
+        public GameState? GetGame(Guid gameId, bool includePoints = false)
         {
             if (!_games.ContainsKey(gameId))
             {

@@ -85,6 +85,19 @@ namespace TicTacToe.Web
                     }
                 });
 
+            // reset game
+            app.MapPut(
+                pattern: "/api/game/reset/{id}",
+                handler: (Guid id, ResetRequestDto resetDto) =>
+                {
+                    using (var scope = app.Services.CreateScope())
+                    {
+                        var serviceProvider = scope.ServiceProvider;
+                        IGameService gameService = serviceProvider
+                            .GetRequiredService<IGameService>();
+                        return gameService.Reset(gameId: id, resetDto: resetDto);
+                    }
+                });
             app.Run();
         }
     }

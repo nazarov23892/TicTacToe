@@ -23,7 +23,9 @@ namespace TicTacToe.Services.Game.Concrete
 
         public BasicResponseDto ConnectToGame(Guid gameId)
         {
-            GameState? game = _gameRepository.GetGame(gameId);
+            GameState? game = _gameRepository.GetGame(
+                gameId: gameId,
+                includePoints: false);
             if (game == null)
             {
                 return GameNotFound();
@@ -66,7 +68,9 @@ namespace TicTacToe.Services.Game.Concrete
 
         public BasicResponseDto DoTurn(Guid gameId, TurnRequestDto turnDto)
         {
-            GameState? game = _gameRepository.GetGame(gameId);
+            GameState? game = _gameRepository.GetGame(
+                gameId: gameId,
+                includePoints: true);
             if (game == null)
             {
                 return GameNotFound();
@@ -202,7 +206,9 @@ namespace TicTacToe.Services.Game.Concrete
 
         public BasicResponseDto GetStatus(Guid gameId)
         {
-            var game = _gameRepository.GetGame(gameId);
+            var game = _gameRepository.GetGame(
+                gameId: gameId,
+                includePoints: true);
             if (game == null)
             {
                 return GameNotFound();
@@ -232,6 +238,29 @@ namespace TicTacToe.Services.Game.Concrete
         private ErrorResponseDto IncorrectPlayerId()
         {
             return new ErrorResponseDto("incorrect player id");
+        }
+
+        public BasicResponseDto Reset(Guid gameId, ResetRequestDto resetDto)
+        {
+            GameState? game = _gameRepository.GetGame(
+                gameId: gameId,
+                includePoints: true);
+            if (game == null)
+            {
+                return GameNotFound();
+            }
+            if(resetDto.PlayerId != game.Player1_Id)
+            {
+                return new ErrorResponseDto("action prohibited");
+            }
+            game.Points
+                .ToList()
+                .ForEach(p => p.Value = GamePointValue.None);
+            game.Status = game.Player2_Id == Guid.Empty
+                 ? GameStatus.WaitPlayer2_Connect
+                 : GameStatus.WaitPlayer1_Turn;
+            _gameRepository.UpdateGame(game);
+            return new ResetResponseDto();
         }
     }
 }

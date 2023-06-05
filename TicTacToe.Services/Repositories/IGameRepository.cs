@@ -9,7 +9,7 @@ namespace TicTacToe.Services.Repositories
 {
     public interface IGameRepository
     {
-        GameState? GetGame(Guid gameId);
+        GameState? GetGame(Guid gameId, bool includePoints = false);
         void AddGame(GameState game);
         void UpdateGame(GameState game);
     }

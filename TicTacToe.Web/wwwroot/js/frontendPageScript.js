@@ -59,6 +59,7 @@ let playerId = null;
 let updateButton = document.getElementById("updateButton");
 let fieldPoints = getFieldPoints();
 let createGameButton = document.getElementById("createGameButton");
+let resetButton = document.getElementById("resetButton");
 let gameId_input = document.getElementById("gameId_input");
 let playerId_input = document.getElementById("palayerId_input");
 let statusInput = document.getElementById("statusInput");
@@ -70,6 +71,7 @@ let timer1 = new TimerTool(UPDATE_INTERVAL);
 
 updateButton.onclick = updateButton_Click;
 createGameButton.onclick = createButton_Click;
+resetButton.onclick = resetButton_Click;
 connectButton.onclick = connectButton_Click;
 autoupdateCheckbox.onchange = autoupdateCheckbox_Change;
 timer1.callback = timer_timeout;
@@ -116,6 +118,10 @@ async function createButton_Click(e) {
     await createNewGame();
 }
 
+async function resetButton_Click(e) {
+    await resetGame();
+}
+
 async function connectButton_Click(e) {
     await connectToGame();
 }
@@ -155,6 +161,40 @@ async function createNewGame() {
     }
     gameId_input.value = result.gameId;
     playerId_input.value = result.player1_Id;
+}
+
+async function resetGame() {
+
+    clearElements();
+    let gameId = gameId_input.value;
+    if (gameId == null || gameId === "") {
+        statusInput.value = "unconnected";
+        return;
+    }
+    let playerId = palayerId_input.value;
+    let resetDto = {
+        playerId: playerId
+    };
+    let url = `/api/game/reset/${gameId}`;
+    let request = {
+        method: "PUT",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(resetDto)
+    };
+    let response = await fetch(url, request);
+    if (!response.ok) {
+        messageInput.value = "disconnected";
+        return;
+    }
+    let result = await response.json();
+    if (!result.done) {
+        messageInput.value = result.error;
+        return;
+    }
+    messageInput.value = "done";
 }
 
 async function updateState() {

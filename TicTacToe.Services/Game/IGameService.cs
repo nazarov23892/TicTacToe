@@ -13,6 +13,7 @@ namespace TicTacToe.Services.Game
         BasicResponseDto Create();
         BasicResponseDto GetStatus(Guid gameId);
         BasicResponseDto ConnectToGame(Guid gameId);
+        BasicResponseDto Reset(Guid gameId, ResetRequestDto resetDto);
         BasicResponseDto DoTurn(Guid gameId, TurnRequestDto turnDto);
     }
 }
