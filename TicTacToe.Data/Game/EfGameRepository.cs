@@ -22,11 +22,17 @@ namespace TicTacToe.Data.Game
 
         public GameState? GetGame(Guid gameId, bool includePoints = false)
         {
-            return includePoints
-                ? efDbContext.Games
-                    .Include(g => g.Points)
-                    .FirstOrDefault(g => g.GameId == gameId)
-                : efDbContext.Games
+            return efDbContext.Games
+                    .Select(p => new GameState
+                    {
+                        GameId = p.GameId,
+                        Player1_Id = p.Player1_Id,
+                        Player2_Id = p.Player2_Id,
+                        Status = p.Status,
+                        Points = includePoints
+                            ? p.Points.ToList()
+                            : new List<GamePointItem>(),
+                    })
                     .FirstOrDefault(g => g.GameId == gameId);
         }
 
